@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-//curl -X POST http://localhost:8080/client -H 'Content-Type: application/json' -d '{"name":"aaaaaa","cpf_cnpj":"10","email":"aaa","address":["as"]}'
 
 @SpringBootApplication
 @RestController
@@ -37,7 +36,7 @@ public class CrudApisApplication {
     // Formata a lista de pessoas encontradas
     String response = "Pessoas encontradas: ";
     for (Pessoa p : result) {
-      response += p.toString() + ", ";
+      response += "[" + p.toString() + "], ";
     }
     return response;
   }
@@ -45,18 +44,18 @@ public class CrudApisApplication {
   @PostMapping("/client")
     //public String PostClient(@RequestParam(value = "name") String name, @RequestParam(value = "cpf_cnpj") String cpf_cnpj, @RequestParam(value = "email") String email, @RequestParam(value = "address") String[] address){
     public String PostClient(@RequestBody Pessoa pessoa){
+    // Objeto Pessoa ja é criado automaticamente
 
     // Tratar todos os dados e fazer a verificacao
     //...
 
-    // Criar objeto pessoa
-    //Pessoa p = new Pessoa(name, cpf_cnpj, email, address);
-    
     // Adicionar a pessoa no banco de dados
     Database.add(pessoa);
+
     for (Pessoa p : Database) {
       System.out.println(p.toString());
     }
+
     return String.format("Pessoa de nome/razao social %s adicionada!", pessoa.getName());
   }
 
@@ -66,8 +65,9 @@ public class CrudApisApplication {
   }
 
   @DeleteMapping("/client")
-  public String DeleteClient(@RequestParam(value = "name") String name) {
-    return String.format("DELETE Hello %s!", name);
+  public String DeleteClient(@RequestParam(value = "id") String cpf_cnpj) {
+    if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!";
+    return String.format("Registro com CPF/CNPJ %s deletado!", cpf_cnpj);
   }
 
 
@@ -86,4 +86,27 @@ public class CrudApisApplication {
     return result;
   }
 
+  // Retorna a PF ou PJ que possui o CPF/CNPJ igual ao parametro cpf_cnpj
+  private Pessoa SearchByCpfCnpj(String cpf_cnpj) {
+    // Para cada pessoa no banco de dados, se o cpf_cnpj for igual ao parametro, retorna a pessoa
+    for (Pessoa p : Database) {
+      if (p.getCpf_cnpj().equals(cpf_cnpj)) {
+        return p;
+      }
+    }
+    return null;
+  }
+
+  // Remove a PF ou PJ que possui o CPF/CNPJ igual ao parametro cpf_cnpj
+  private int RemoveByCpfCnpj(String cpf_cnpj) {
+    // Para cada pessoa no banco de dados, se o cpf_cnpj for igual ao parametro, remove a pessoa
+    for (Pessoa p : Database) {
+      if (p.getCpf_cnpj().equals(cpf_cnpj)) {
+        Database.remove(p);
+        return 1;
+      }
+    }
+    return 0;
+  }
+  
 }
