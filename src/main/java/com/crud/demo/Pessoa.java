@@ -15,6 +15,11 @@ public class Pessoa {
     this.address = address;
   }
   
+  @Override
+  public String toString() {
+    return String.format("Nome: %s, CPF/CNPJ: %s, Email: %s, Endereco: %s", name, cpf_cnpj, email, address);
+  }
+
   public String getName() {
     return name;
   }
