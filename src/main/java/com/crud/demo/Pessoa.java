@@ -17,7 +17,11 @@ public class Pessoa {
   
   @Override
   public String toString() {
-    return String.format("Nome: %s, CPF/CNPJ: %s, Email: %s, Endereco: %s", name, cpf_cnpj, email, address);
+    String addresses = "";
+    for (String a : this.address) {
+      addresses += a + ", ";
+    }
+    return String.format("Nome: %s, CPF/CNPJ: %s, Email: %s, Endereco: %s", name, cpf_cnpj, email, addresses);
   }
 
   public String getName() {
