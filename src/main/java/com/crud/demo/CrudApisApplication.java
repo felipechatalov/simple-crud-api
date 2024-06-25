@@ -27,6 +27,7 @@ public class CrudApisApplication {
 
   }
 
+  //TODO1: Get poder procurar registros por cpf/cnpj, email e/ou endereco
   @GetMapping("/client")
   public String GetClient(@RequestParam(value = "name") String name) {
     List<Pessoa> result = SearchByName(name);
@@ -44,18 +45,16 @@ public class CrudApisApplication {
   }
 
   @PostMapping("/client")
-    //public String PostClient(@RequestParam(value = "name") String name, @RequestParam(value = "cpf_cnpj") String cpf_cnpj, @RequestParam(value = "email") String email, @RequestParam(value = "address") String[] address){
     public String PostClient(@RequestBody Pessoa pessoa){
     // Objeto Pessoa ja é criado automaticamente
-    
 
-
-    // Tratar todos os dados e fazer a verificacao
+    // Tratar todos os dados e fazer a validação
     if (pessoa.getName().length() == 0) return "Nome/Razao social nao pode ser vazio!\n";
     if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
     if (pessoa.getEmail().length() == 0) return "Email nao pode ser vazio!\n";
+
     if (SearchByCpfCnpj(pessoa.getCpf_cnpj()) != null) return "CPF/CNPJ ja cadastrado!\n";
-    //...
+    
 
     // Adicionar a pessoa no banco de dados
     Database.add(pessoa);
@@ -68,22 +67,25 @@ public class CrudApisApplication {
     return String.format("Pessoa de nome/razao social %s adicionada!\n", pessoa.getName());
   }
 
+  // Considera que o JSON está completo, sem nenhum campo faltando
   @PutMapping("/client")
   public String PutClient(@RequestBody Pessoa pessoa){
+    // Caso o campo do CPF/CNPJ esteja vazio
     if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
 
+    // Caso todos os campos estejam vazios
     if (pessoa.getName().length() == 0
     && pessoa.getEmail().length() == 0
     && pessoa.getAddress().length == 0) return "Nenhum dado para atualizar!\n";
 
+    // Caso nao exista pessoa com o CPF/CNPJ 
     Pessoa p = SearchByCpfCnpj(pessoa.getCpf_cnpj());
-
     if (p == null) return "Nenhuma pessoa encontrada!\n";
 
+    // Atualiza os campos da pessoa
     if (pessoa.getName().length() != 0) p.setName(pessoa.getName());
     if (pessoa.getEmail().length() != 0) p.setEmail(pessoa.getEmail());
     if (pessoa.getAddress().length != 0) p.setAddress(pessoa.getAddress());
-    //...
 
     return String.format("Cadastro de CPF/CNPJ %s atualizada!\n", pessoa.getCpf_cnpj());
   }
@@ -142,3 +144,5 @@ public class CrudApisApplication {
   }
   
 }
+
+
