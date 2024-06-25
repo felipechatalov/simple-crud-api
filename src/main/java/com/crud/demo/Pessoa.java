@@ -24,6 +24,14 @@ public class Pessoa {
     return String.format("Nome: %s, CPF/CNPJ: %s, Email: %s, Endereco: %s", name, cpf_cnpj, email, addresses);
   }
 
+  public String toJson(){
+    String addresses = "";
+    for (String a : this.address) {
+      addresses += a + ", ";
+    }
+    return String.format("{\"name\": \"%s\", \"cpf_cnpj\": \"%s\", \"email\": \"%s\", \"address\": \"%s\"}", name, cpf_cnpj, email, addresses);
+  }
+
   public String getName() {
     return name;
   }

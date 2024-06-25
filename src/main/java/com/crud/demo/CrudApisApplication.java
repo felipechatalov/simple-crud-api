@@ -37,16 +37,16 @@ public class CrudApisApplication {
       return "Nenhuma pessoa encontrada!\n";
     }
 
-    // Formata a lista de pessoas encontradas
-    String response = "Pessoas encontradas: ";
+    // Formata a lista de pessoas encontradas em JSON
+    String response = "{\n\"records\": [";
+
     for (Pessoa p : result) {
-      response += "[" + p.toString() + "], ";
+      response += p.toJson() + ", ";
     }
-    response += "\n";
+    response += "]}\n";
     return response;
   }
 
-  //TODO5: Get para usar CPF/CNPJ como parametro de busca
   @GetMapping("/client/{id}")
   public String GetClientByCpfCnpj(@PathVariable String id) {
     Pessoa p = SearchByCpfCnpj(id);
