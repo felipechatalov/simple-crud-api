@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class CrudApisApplication {
   }
 
   //TODO1: Get poder procurar registros por cpf/cnpj, email e/ou endereco
+  //TODO4: Retornar os registros em formato JSON
   @GetMapping("/client")
   public String GetClient(@RequestParam(value = "name") String name) {
     List<Pessoa> result = SearchByName(name);
@@ -42,6 +44,16 @@ public class CrudApisApplication {
     }
     response += "\n";
     return response;
+  }
+
+  //TODO5: Get para usar CPF/CNPJ como parametro de busca
+  @GetMapping("/client/{id}")
+  public String GetClientByCpfCnpj(@PathVariable String id) {
+    Pessoa p = SearchByCpfCnpj(id);
+    if (p == null) {
+      return "Nenhuma pessoa encontrada!\n";
+    }
+    return p.toString() + "\n";
   }
 
   @PostMapping("/client")
