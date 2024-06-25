@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+//curl -X POST http://localhost:8080/client -H "Content-Type: application/json" -d '{"name": "claudio", "cpf_cnpj":"1", "email":"aaa", "address":["um", "dois"]}'
 
 @SpringBootApplication
 @RestController
@@ -30,7 +31,7 @@ public class CrudApisApplication {
   public String GetClient(@RequestParam(value = "name") String name) {
     List<Pessoa> result = SearchByName(name);
     if (result.size() == 0) {
-      return "Nenhuma pessoa encontrada!";
+      return "Nenhuma pessoa encontrada!\n";
     }
 
     // Formata a lista de pessoas encontradas
@@ -38,6 +39,7 @@ public class CrudApisApplication {
     for (Pessoa p : result) {
       response += "[" + p.toString() + "], ";
     }
+    response += "\n";
     return response;
   }
 
@@ -45,8 +47,14 @@ public class CrudApisApplication {
     //public String PostClient(@RequestParam(value = "name") String name, @RequestParam(value = "cpf_cnpj") String cpf_cnpj, @RequestParam(value = "email") String email, @RequestParam(value = "address") String[] address){
     public String PostClient(@RequestBody Pessoa pessoa){
     // Objeto Pessoa ja é criado automaticamente
+    
+
 
     // Tratar todos os dados e fazer a verificacao
+    if (pessoa.getName().length() == 0) return "Nome/Razao social nao pode ser vazio!\n";
+    if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
+    if (pessoa.getEmail().length() == 0) return "Email nao pode ser vazio!\n";
+    if (SearchByCpfCnpj(pessoa.getCpf_cnpj()) != null) return "CPF/CNPJ ja cadastrado!\n";
     //...
 
     // Adicionar a pessoa no banco de dados
@@ -55,19 +63,35 @@ public class CrudApisApplication {
     for (Pessoa p : Database) {
       System.out.println(p.toString());
     }
+    System.out.println();
 
-    return String.format("Pessoa de nome/razao social %s adicionada!", pessoa.getName());
+    return String.format("Pessoa de nome/razao social %s adicionada!\n", pessoa.getName());
   }
 
   @PutMapping("/client")
-  public String PutClient(@RequestParam(value = "name") String name) {
-    return String.format("PUT Hello %s!", name);
+  public String PutClient(@RequestBody Pessoa pessoa){
+    if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
+
+    if (pessoa.getName().length() == 0
+    && pessoa.getEmail().length() == 0
+    && pessoa.getAddress().length == 0) return "Nenhum dado para atualizar!\n";
+
+    Pessoa p = SearchByCpfCnpj(pessoa.getCpf_cnpj());
+
+    if (p == null) return "Nenhuma pessoa encontrada!\n";
+
+    if (pessoa.getName().length() != 0) p.setName(pessoa.getName());
+    if (pessoa.getEmail().length() != 0) p.setEmail(pessoa.getEmail());
+    if (pessoa.getAddress().length != 0) p.setAddress(pessoa.getAddress());
+    //...
+
+    return String.format("Cadastro de CPF/CNPJ %s atualizada!\n", pessoa.getCpf_cnpj());
   }
 
   @DeleteMapping("/client")
   public String DeleteClient(@RequestParam(value = "id") String cpf_cnpj) {
-    if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!";
-    return String.format("Registro com CPF/CNPJ %s deletado!", cpf_cnpj);
+    if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!\n";
+    return String.format("Registro com CPF/CNPJ %s deletado!\n", cpf_cnpj);
   }
 
 
@@ -107,6 +131,14 @@ public class CrudApisApplication {
       }
     }
     return 0;
+  }
+
+  private int IsAddressesEqual(String[] a1, String[] a2) {
+    if (a1.length != a2.length) return 0;
+    for (int i = 0; i < a1.length; i++) {
+      if (!a1[i].equals(a2[i])) return 0;
+    }
+    return 1;
   }
   
 }
