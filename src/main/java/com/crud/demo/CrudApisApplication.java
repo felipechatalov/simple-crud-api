@@ -28,14 +28,35 @@ public class CrudApisApplication {
 
   }
 
-  //TODO1: Get poder procurar registros por cpf/cnpj, email e/ou endereco
-  //TODO4: Retornar os registros em formato JSON
   @GetMapping("/client")
-  public String GetClient(@RequestParam(value = "name") String name) {
-    List<Pessoa> result = SearchByName(name);
-    if (result.size() == 0) {
-      return "Nenhuma pessoa encontrada!\n";
+  public String GetClient(@RequestParam(value = "name", defaultValue = "") String name, 
+                          @RequestParam(value = "email", defaultValue = "") String email) {
+    if (name.length() == 0 && email.length() == 0) {
+      return "Nenhum parametro de busca!\n";
     }
+
+    List<Pessoa> result;
+
+    if (name.length() != 0){
+      result = SearchByName(name);
+      if (result.size() == 0) {
+        return "Nenhuma pessoa encontrada!\n";
+      }
+    }
+    else{
+      result = Database;
+    }
+
+    if (email.length() != 0) {
+      List<Pessoa> result2 = new ArrayList<Pessoa>();
+      for (Pessoa p : result) {
+        if (p.getEmail().equals(email)) {
+          result2.add(p);
+        }
+      }
+      result = result2;
+    }
+
 
     // Formata a lista de pessoas encontradas em JSON
     String response = "{\n\"records\": [";
@@ -44,6 +65,7 @@ public class CrudApisApplication {
       response += p.toJson() + ", ";
     }
     response += "]}\n";
+
     return response;
   }
 
