@@ -32,12 +32,16 @@ public class CrudApisApplication {
   // Carrega o banco de dados com alguns registros
   private static void PreloadDatabase() {
       // Assume que o arquivo preload.csv esta na mesma pasta que o arquivo .jar
-      File file = new File("preload.csv");
+      File file = new File("./preload.csv");
 
       try {
         // Inicializaz o leitor 
         Scanner Reader = new Scanner(file);
         // Enquanto houver linhas no arquivo, adiciona a pessoa no banco de dados
+
+        // Pula a primeira linha, que contem os nomes das colunas
+        Reader.nextLine();
+
         while (Reader.hasNextLine()) {
           String line = Reader.nextLine();
           String[] fields = line.split(";");
@@ -77,7 +81,7 @@ public class CrudApisApplication {
 
     // Se o nome foi passado, busca por nome
     if (name.length() != 0){
-      result = SearchByName(name);
+      result = SearchByNameIn(name, Database);
       if (result.size() == 0) {
         return "Nenhuma pessoa encontrada!\n";
       }
@@ -85,13 +89,7 @@ public class CrudApisApplication {
 
     // Se o email foi passado, filtra a lista de pessoas encontradas baseada no email
     if (email.length() != 0) {
-      List<Pessoa> result2 = new ArrayList<Pessoa>();
-      for (Pessoa p : result) {
-        if (p.getEmail().equals(email)) {
-          result2.add(p);
-        }
-      }
-      result = result2;
+      result = SearchByEmailIn(email, result);
     }
 
     // Caso nao tenha encontrado nenhuma pessoa
@@ -113,7 +111,7 @@ public class CrudApisApplication {
   // Metodo GET, recebe o CPF/CNPJ do registro a ser buscado, retorna string do registro, considera id como CPF ou CNPJ
   @GetMapping("/records/{id}")
   public String GetRecordByCpfCnpj(@PathVariable String id) {
-    Pessoa p = SearchByCpfCnpj(id);
+    Pessoa p = SearchByCpfCnpjIn(id, Database);
     if (p == null) {
       return "Nenhuma pessoa encontrada!\n";
     }
@@ -131,7 +129,7 @@ public class CrudApisApplication {
     if (pessoa.getEmail().length() == 0) return "Email nao pode ser vazio!\n";
 
     // Caso o CPF/CNPJ ja exista no banco de dados
-    if (SearchByCpfCnpj(pessoa.getCpf_cnpj()) != null) return "CPF/CNPJ ja cadastrado!\n";
+    if (SearchByCpfCnpjIn(pessoa.getCpf_cnpj(), Database) != null) return "CPF/CNPJ ja cadastrado!\n";
     
     // Adiciona a pessoa no banco de dados
     Database.add(pessoa);
@@ -157,7 +155,7 @@ public class CrudApisApplication {
     && pessoa.getAddress().length == 0) return "Nenhum dado para atualizar!\n";
 
     // Caso nao exista pessoa com o CPF/CNPJ 
-    Pessoa p = SearchByCpfCnpj(pessoa.getCpf_cnpj());
+    Pessoa p = SearchByCpfCnpjIn(pessoa.getCpf_cnpj(), Database);
     if (p == null) return "Nenhuma pessoa encontrada!\n";
 
     // Atualiza os campos da pessoa
@@ -179,12 +177,12 @@ public class CrudApisApplication {
 
 
   // Retorna todas as pessoas que possuem nome igual ao parametro name
-  private List<Pessoa> SearchByName(String name) {
+  private List<Pessoa> SearchByNameIn(String name, List<Pessoa> database) {
     // Lista dinamica
     List<Pessoa> result = new ArrayList<Pessoa>();
     
     // Para cada pessoa no banco de dados, se o nome for igual ao parametro, adiciona na lista
-    for (Pessoa p : Database) {
+    for (Pessoa p : database) {
       if (p.getName().equals(name)) {
         result.add(p);
       }
@@ -193,9 +191,9 @@ public class CrudApisApplication {
   }
 
   // Retorna a PF ou PJ que possui o CPF/CNPJ igual ao parametro cpf_cnpj
-  private Pessoa SearchByCpfCnpj(String cpf_cnpj) {
+  private Pessoa SearchByCpfCnpjIn(String cpf_cnpj, List<Pessoa> database) {
     // Para cada pessoa no banco de dados, se o cpf_cnpj for igual ao parametro, retorna a pessoa
-    for (Pessoa p : Database) {
+    for (Pessoa p : database) {
       if (p.getCpf_cnpj().equals(cpf_cnpj)) {
         return p;
       }
@@ -213,6 +211,20 @@ public class CrudApisApplication {
       }
     }
     return 0;
+  }
+
+  // Retorna todas as pessoas que possuem email igual ao parametro email
+  private List<Pessoa> SearchByEmailIn(String email, List<Pessoa> database) {
+    // Lista dinamica
+    List<Pessoa> result = new ArrayList<Pessoa>();
+    
+    // Para cada pessoa no banco de dados, se o email for igual ao parametro, adiciona na lista
+    for (Pessoa p : database) {
+      if (p.getEmail().equals(email)) {
+        result.add(p);
+      }
+    }
+    return result;
   }
 
 }
