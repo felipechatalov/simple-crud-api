@@ -33,7 +33,9 @@ public class CrudApisApplication {
       File file = new File("src/main/java/com/crud/demo/preload.csv");
 
       try {
+        // Inicializaz o leitor 
         Scanner Reader = new Scanner(file);
+        // Enquanto houver linhas no arquivo, adiciona a pessoa no banco de dados
         while (Reader.hasNextLine()) {
           String line = Reader.nextLine();
           String[] fields = line.split(";");
@@ -47,6 +49,7 @@ public class CrudApisApplication {
           //System.out.println(Reader.nextLine());
         }
         Reader.close();
+      // Caso o arquivo nao seja encontrado
       } catch (FileNotFoundException e) {
         System.out.println("Arquivo nao encontrado!");
         e.printStackTrace();
@@ -65,13 +68,10 @@ public class CrudApisApplication {
   public String GetRecord(@RequestParam(value = "name", defaultValue = "") String name, 
                           @RequestParam(value = "email", defaultValue = "") String email) {
     
-    // Caso nome nem email tenha sido passado
-    if (name.length() == 0 && email.length() == 0) {
-      return "Nenhum parametro de busca!\n";
-    }
+    // Caso nome nem email tenha sido passado, retorna todos os registros
 
     // Iniciliza a lista de resultado
-    List<Pessoa> result;
+    List<Pessoa> result = Database;
 
     // Se o nome foi passado, busca por nome
     if (name.length() != 0){
@@ -79,10 +79,6 @@ public class CrudApisApplication {
       if (result.size() == 0) {
         return "Nenhuma pessoa encontrada!\n";
       }
-    }
-    // Se nao, retorna o banco de dados inteiro para filtrar por email
-    else{
-      result = Database;
     }
 
     // Se o email foi passado, filtra a lista de pessoas encontradas baseada no email
