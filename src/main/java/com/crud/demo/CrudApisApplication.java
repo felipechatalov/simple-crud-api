@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,27 @@ public class CrudApisApplication {
 
   // Carrega o banco de dados com alguns registros
   private static void PreloadDatabase() {
-    
+      File file = new File("src/main/java/com/crud/demo/preload.csv");
+
+      try {
+        Scanner Reader = new Scanner(file);
+        while (Reader.hasNextLine()) {
+          String line = Reader.nextLine();
+          String[] fields = line.split(";");
+
+          String name = fields[1] + " " + fields[2];
+          String cpf_cnpj = fields[4];
+          String email = fields[3];
+          
+          Pessoa p = new Pessoa(name, cpf_cnpj, email, new String[0]);
+          Database.add(p);
+          //System.out.println(Reader.nextLine());
+        }
+        Reader.close();
+      } catch (FileNotFoundException e) {
+        System.out.println("Arquivo nao encontrado!");
+        e.printStackTrace();
+      }
   }
 
   // Carrega o banco de dados e inicia a aplicacao
@@ -84,7 +108,7 @@ public class CrudApisApplication {
     return response;
   }
 
-  // Metodo GET, recebe o CPF/CNPJ do registro a ser buscado, retorna string do registro
+  // Metodo GET, recebe o CPF/CNPJ do registro a ser buscado, retorna string do registro, considera id como CPF ou CNPJ
   @GetMapping("/client/{id}")
   public String GetClientByCpfCnpj(@PathVariable String id) {
     Pessoa p = SearchByCpfCnpj(id);
