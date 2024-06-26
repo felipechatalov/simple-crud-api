@@ -167,11 +167,11 @@ public class CrudApisApplication {
   }
 
   // Metodo DELETE, recebe o CPF/CNPJ do registro a ser deletado
-  @DeleteMapping("/client")
-  public String DeleteClient(@RequestParam(value = "id") String cpf_cnpj) {
-    if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!\n";
+  @DeleteMapping("/client/{id}")
+  public String DeleteClient(@PathVariable String id) {
+    if (RemoveByCpfCnpj(id) == 0) return "Nenhuma pessoa encontrada!\n";
 
-    return String.format("Registro com CPF/CNPJ %s deletado!\n", cpf_cnpj);
+    return String.format("Registro com CPF/CNPJ %s deletado!\n", id);
   }
 
 
