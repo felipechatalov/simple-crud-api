@@ -1,7 +1,7 @@
 Utilizando Java 22, mais especificamente "Liberica Standard JDK 22.0.1+12 x86 64 for Linux".
 Gradlew para compilar e rodar.
 Spring boot Initialzr para geração dos arquivos base.
-Spring para criação das APIs
+Spring versão 3.3.1 para criação das APIs
 
 Para rodar diretamente do gradlew basta ./gradlew bootRun
 Para criar uma build jar basta rodar ./gradlew build
