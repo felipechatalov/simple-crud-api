@@ -1,15 +1,12 @@
 Utilizando Java 22, mais especificamente "Liberica Standard JDK 22.0.1+12 x86 64 for Linux".
-
 Gradlew para compilar e rodar.
-
 Spring boot Initialzr para geração dos arquivos base.
-
 Spring versão 3.3.1 para criação das APIs
 
 
 Para rodar diretamente do gradlew basta "./gradlew bootRun"
-
 Para criar uma build jar basta rodar "./gradlew build". O arquivo .jar será criado em "build/libs", certifique de que o arquivo "preload.csv" se encontra no mesmo diretório do arquivo .jar
+
 
 Este repositório ja conta com um arquivo .jar com nome de "final.jar" compilado usando as configurações citadas nas primeiras linhas.
 
