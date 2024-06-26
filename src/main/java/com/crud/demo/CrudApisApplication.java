@@ -21,32 +21,47 @@ import java.util.List;
 @RestController
 public class CrudApisApplication {
 
+  // Para simular um banco de dados
   public static List<Pessoa> Database = new ArrayList<Pessoa>();
 
+  // Carrega o banco de dados com alguns registros
+  private static void PreloadDatabase() {
+    
+  }
+
+  // Carrega o banco de dados e inicia a aplicacao
   public static void main(String[] args) {
+    PreloadDatabase();  
     SpringApplication.run(CrudApisApplication.class, args);
 
   }
 
+  // Metodo GET, recebe nome ou email do registro a ser buscado, retorna JSON com todos os matchs
   @GetMapping("/client")
   public String GetClient(@RequestParam(value = "name", defaultValue = "") String name, 
                           @RequestParam(value = "email", defaultValue = "") String email) {
+    
+    // Caso nome nem email tenha sido passado
     if (name.length() == 0 && email.length() == 0) {
       return "Nenhum parametro de busca!\n";
     }
 
+    // Iniciliza a lista de resultado
     List<Pessoa> result;
 
+    // Se o nome foi passado, busca por nome
     if (name.length() != 0){
       result = SearchByName(name);
       if (result.size() == 0) {
         return "Nenhuma pessoa encontrada!\n";
       }
     }
+    // Se nao, retorna o banco de dados inteiro para filtrar por email
     else{
       result = Database;
     }
 
+    // Se o email foi passado, filtra a lista de pessoas encontradas baseada no email
     if (email.length() != 0) {
       List<Pessoa> result2 = new ArrayList<Pessoa>();
       for (Pessoa p : result) {
@@ -58,7 +73,7 @@ public class CrudApisApplication {
     }
 
 
-    // Formata a lista de pessoas encontradas em JSON
+    // Formata a lista de pessoas encontradas em JSON e retorna
     String response = "{\n\"records\": [";
 
     for (Pessoa p : result) {
@@ -69,6 +84,7 @@ public class CrudApisApplication {
     return response;
   }
 
+  // Metodo GET, recebe o CPF/CNPJ do registro a ser buscado, retorna string do registro
   @GetMapping("/client/{id}")
   public String GetClientByCpfCnpj(@PathVariable String id) {
     Pessoa p = SearchByCpfCnpj(id);
@@ -78,21 +94,23 @@ public class CrudApisApplication {
     return p.toString() + "\n";
   }
 
+  // Metodo POST, recebe JSON com os dados da pessoa a ser adicionada
   @PostMapping("/client")
     public String PostClient(@RequestBody Pessoa pessoa){
     // Objeto Pessoa ja é criado automaticamente
 
-    // Tratar todos os dados e fazer a validação
+    // Certifica que os campos obrigatorios nao estao vazios
     if (pessoa.getName().length() == 0) return "Nome/Razao social nao pode ser vazio!\n";
     if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
     if (pessoa.getEmail().length() == 0) return "Email nao pode ser vazio!\n";
 
+    // Caso o CPF/CNPJ ja exista no banco de dados
     if (SearchByCpfCnpj(pessoa.getCpf_cnpj()) != null) return "CPF/CNPJ ja cadastrado!\n";
     
-
-    // Adicionar a pessoa no banco de dados
+    // Adiciona a pessoa no banco de dados
     Database.add(pessoa);
 
+    // Printa o banco de dados a fim de debug
     for (Pessoa p : Database) {
       System.out.println(p.toString());
     }
@@ -101,7 +119,7 @@ public class CrudApisApplication {
     return String.format("Pessoa de nome/razao social %s adicionada!\n", pessoa.getName());
   }
 
-  // Considera que o JSON está completo, sem nenhum campo faltando
+  // Metodo PUT, recebe JSON com os dados da pessoa a ser atualizada, CPF/CNPJ obrigatorio, campos vazios nao sao atualizados
   @PutMapping("/client")
   public String PutClient(@RequestBody Pessoa pessoa){
     // Caso o campo do CPF/CNPJ esteja vazio
@@ -124,9 +142,11 @@ public class CrudApisApplication {
     return String.format("Cadastro de CPF/CNPJ %s atualizada!\n", pessoa.getCpf_cnpj());
   }
 
+  // Metodo DELETE, recebe o CPF/CNPJ do registro a ser deletado
   @DeleteMapping("/client")
   public String DeleteClient(@RequestParam(value = "id") String cpf_cnpj) {
     if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!\n";
+    
     return String.format("Registro com CPF/CNPJ %s deletado!\n", cpf_cnpj);
   }
 
