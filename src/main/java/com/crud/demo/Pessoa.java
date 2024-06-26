@@ -25,11 +25,15 @@ public class Pessoa {
   }
 
   public String toJson(){
-    String addresses = "";
-    for (String a : this.address) {
-      addresses += a + ", ";
+    String addresses = this.address.length == 0 ? "[" : "[\"" + this.address[0] + "\"";
+    for (int i = 1; i < this.address.length; i++) {
+      addresses += ", \"" + this.address[i] + "\"";
     }
-    return String.format("{\"name\": \"%s\", \"cpf_cnpj\": \"%s\", \"email\": \"%s\", \"address\": \"%s\"}", name, cpf_cnpj, email, addresses);
+    addresses += "]";
+
+    String a = String.format("{\"name\": \"%s\", \"cpf_cnpj\": \"%s\", \"email\": \"%s\", \"address\": %s}", name, cpf_cnpj, email, addresses);
+    System.out.println(a);
+    return a;
   }
 
   public String getName() {
