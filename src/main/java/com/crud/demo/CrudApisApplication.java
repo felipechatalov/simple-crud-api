@@ -146,7 +146,7 @@ public class CrudApisApplication {
   @DeleteMapping("/client")
   public String DeleteClient(@RequestParam(value = "id") String cpf_cnpj) {
     if (RemoveByCpfCnpj(cpf_cnpj) == 0) return "Nenhuma pessoa encontrada!\n";
-    
+
     return String.format("Registro com CPF/CNPJ %s deletado!\n", cpf_cnpj);
   }
 
@@ -189,14 +189,6 @@ public class CrudApisApplication {
     return 0;
   }
 
-  private int IsAddressesEqual(String[] a1, String[] a2) {
-    if (a1.length != a2.length) return 0;
-    for (int i = 0; i < a1.length; i++) {
-      if (!a1[i].equals(a2[i])) return 0;
-    }
-    return 1;
-  }
-  
 }
 
 
