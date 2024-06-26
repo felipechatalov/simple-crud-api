@@ -96,7 +96,7 @@ public class CrudApisApplication {
     if (result.size() == 0) {
       return "Nenhuma pessoa encontrada!\n";
     }
-
+    System.out.println(result.size());
     // Formata a lista de pessoas encontradas em JSON e retorna
     String response = "{\n\"records\": [";
     String people = result.get(0).toJson();
@@ -105,7 +105,7 @@ public class CrudApisApplication {
       people += ", " + result.get(i).toJson();
     }
 
-    response += "]}\n";
+    response += people + "]}\n";
     return response;
   }
 
@@ -136,10 +136,10 @@ public class CrudApisApplication {
     Database.add(pessoa);
 
     // Printa o banco de dados a fim de debug
-    for (Pessoa p : Database) {
-      System.out.println(p.toString());
-    }
-    System.out.println();
+    // for (Pessoa p : Database) {
+    //  System.out.println(p.toString());
+    // }
+    // System.out.println();
 
     return String.format("Pessoa de nome/razao social %s adicionada!\n", pessoa.getName());
   }

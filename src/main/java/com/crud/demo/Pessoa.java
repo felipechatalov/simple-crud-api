@@ -31,9 +31,7 @@ public class Pessoa {
     }
     addresses += "]";
 
-    String a = String.format("{\"name\": \"%s\", \"cpf_cnpj\": \"%s\", \"email\": \"%s\", \"address\": %s}", name, cpf_cnpj, email, addresses);
-    System.out.println(a);
-    return a;
+    return String.format("{\"name\": \"%s\", \"cpf_cnpj\": \"%s\", \"email\": \"%s\", \"address\": %s}", name, cpf_cnpj, email, addresses);
   }
 
   public String getName() {
