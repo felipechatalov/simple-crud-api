@@ -19,7 +19,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-//curl -X POST http://localhost:8080/client -H "Content-Type: application/json" -d '{"name": "claudio", "cpf_cnpj":"1", "email":"aaa", "address":["um", "dois"]}'
+//curl -X POST http://localhost:8080/records -H "Content-Type: application/json" -d '{"name": "claudio", "cpf_cnpj":"1", "email":"aaa", "address":["um", "dois"]}'
 
 @SpringBootApplication
 @RestController
@@ -61,8 +61,8 @@ public class CrudApisApplication {
   }
 
   // Metodo GET, recebe nome ou email do registro a ser buscado, retorna JSON com todos os matchs
-  @GetMapping("/client")
-  public String GetClient(@RequestParam(value = "name", defaultValue = "") String name, 
+  @GetMapping("/records")
+  public String GetRecord(@RequestParam(value = "name", defaultValue = "") String name, 
                           @RequestParam(value = "email", defaultValue = "") String email) {
     
     // Caso nome nem email tenha sido passado
@@ -109,8 +109,8 @@ public class CrudApisApplication {
   }
 
   // Metodo GET, recebe o CPF/CNPJ do registro a ser buscado, retorna string do registro, considera id como CPF ou CNPJ
-  @GetMapping("/client/{id}")
-  public String GetClientByCpfCnpj(@PathVariable String id) {
+  @GetMapping("/records/{id}")
+  public String GetRecordByCpfCnpj(@PathVariable String id) {
     Pessoa p = SearchByCpfCnpj(id);
     if (p == null) {
       return "Nenhuma pessoa encontrada!\n";
@@ -119,8 +119,8 @@ public class CrudApisApplication {
   }
 
   // Metodo POST, recebe JSON com os dados da pessoa a ser adicionada
-  @PostMapping("/client")
-    public String PostClient(@RequestBody Pessoa pessoa){
+  @PostMapping("/records")
+    public String PostRecord(@RequestBody Pessoa pessoa){
     // Objeto Pessoa ja é criado automaticamente
 
     // Certifica que os campos obrigatorios nao estao vazios
@@ -144,8 +144,8 @@ public class CrudApisApplication {
   }
 
   // Metodo PUT, recebe JSON com os dados da pessoa a ser atualizada, CPF/CNPJ obrigatorio, campos vazios nao sao atualizados
-  @PutMapping("/client")
-  public String PutClient(@RequestBody Pessoa pessoa){
+  @PutMapping("/records")
+  public String PutRecord(@RequestBody Pessoa pessoa){
     // Caso o campo do CPF/CNPJ esteja vazio
     if (pessoa.getCpf_cnpj().length() == 0) return "CPF/CNPJ nao pode ser vazio!\n";
 
@@ -167,8 +167,8 @@ public class CrudApisApplication {
   }
 
   // Metodo DELETE, recebe o CPF/CNPJ do registro a ser deletado
-  @DeleteMapping("/client/{id}")
-  public String DeleteClient(@PathVariable String id) {
+  @DeleteMapping("/records/{id}")
+  public String DeleteRecord(@PathVariable String id) {
     if (RemoveByCpfCnpj(id) == 0) return "Nenhuma pessoa encontrada!\n";
 
     return String.format("Registro com CPF/CNPJ %s deletado!\n", id);
