@@ -19,7 +19,8 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-//curl -X POST http://localhost:8080/records -H "Content-Type: application/json" -d '{"name": "claudio", "cpf_cnpj":"1", "email":"aaa", "address":["um", "dois"]}'
+// POST example
+// curl -X POST http://localhost:8080/records -H "Content-Type: application/json" -d '{"name": "claudio", "cpf_cnpj":"1", "email":"aaa", "address":["um", "dois"]}'
 
 @SpringBootApplication
 @RestController
@@ -30,7 +31,8 @@ public class CrudApisApplication {
 
   // Carrega o banco de dados com alguns registros
   private static void PreloadDatabase() {
-      File file = new File("src/main/java/com/crud/demo/preload.csv");
+      // Assume que o arquivo preload.csv esta na mesma pasta que o arquivo .jar
+      File file = new File("preload.csv");
 
       try {
         // Inicializaz o leitor 
@@ -96,7 +98,6 @@ public class CrudApisApplication {
     if (result.size() == 0) {
       return "Nenhuma pessoa encontrada!\n";
     }
-    System.out.println(result.size());
     // Formata a lista de pessoas encontradas em JSON e retorna
     String response = "{\n\"records\": [";
     String people = result.get(0).toJson();
