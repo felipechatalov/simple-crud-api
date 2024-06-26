@@ -92,15 +92,20 @@ public class CrudApisApplication {
       result = result2;
     }
 
+    // Caso nao tenha encontrado nenhuma pessoa
+    if (result.size() == 0) {
+      return "Nenhuma pessoa encontrada!\n";
+    }
 
     // Formata a lista de pessoas encontradas em JSON e retorna
     String response = "{\n\"records\": [";
+    String people = result.get(0).toJson();
 
-    for (Pessoa p : result) {
-      response += p.toJson() + ", ";
+    for (int i = 1; i < result.size(); i++) {
+      people += ", " + result.get(i).toJson();
     }
-    response += "]}\n";
 
+    response += "]}\n";
     return response;
   }
 
